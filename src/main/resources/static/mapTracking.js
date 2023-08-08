@@ -20,7 +20,7 @@ $(document).ready(function(){
 		  
 		   const { Map } = await google.maps.importLibrary("maps");
 		   var opts = {
-		            zoom: 18,
+		            zoom: 12,
 		            center: center,
 		            mapTypeId: google.maps.MapTypeId.ROADMAP
 		        };
@@ -88,7 +88,7 @@ $(document).ready(function(){
 			    	 alert("out polygon");
 			     }
 	    		
-	    	}else {//circle
+	    	} else if(shapeCordinates['polygon'].length=0) {//circle
 	    		
 	    		var c=new google.maps.Circle({
 				      strokeColor: "#FF0000",
@@ -105,7 +105,7 @@ $(document).ready(function(){
 	    		}else{
 	    			alert("out circle");
 	    		}
-	    	}
+	    	} 
 	    	
 	        deleteMarkers(idd);
 	        
@@ -115,7 +115,7 @@ $(document).ready(function(){
 	            customInfo:idd
 	        });
 	        markers.push(marker);
-	        map.setCenter(new google.maps.LatLng(lat, lon));
+	       // map.setCenter(new google.maps.LatLng(lat, lon));
 	       
 	        
 	    }
@@ -137,7 +137,7 @@ $(document).ready(function(){
 	    initMap();
 
 		var socket = new SockJS('https://247rsa.softservtest.com/VehicleTrackingBoot/updateMapLocation');
-	    // var socket = new SockJS('http://localhost:8080/updateMapLocation');
+	    //var socket = new SockJS('http://localhost:8080/updateMapLocation');
 	    
 	    stompClient = Stomp.over(socket);
 	 console.log("I am out frame");
@@ -181,8 +181,8 @@ $(document).ready(function(){
 	        			 
 	        		 }
 	        			        	
-	        	//$("#lang_td").html("LLatitude: "+mapJson.latitude);
-	        	//$("#lat_td").html("LLongitude: "+mapJson.longitude);
+	        	$("#lang_td").html("LLatitude: "+mapJson.latitude);
+	        	$("#lat_td").html("LLongitude: "+mapJson.longitude);
 	            
 	        });
 	    });
