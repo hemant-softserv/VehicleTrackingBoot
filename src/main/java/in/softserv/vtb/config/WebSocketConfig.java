@@ -23,6 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/updateMapLocation");
 		registry.addEndpoint("/updateMapLocation").withSockJS();
+		
 		//registry.addEndpoint("/updateMapLocation").setHandshakeHandler(new UserHandshakeHandler()).withSockJS();
 		
 	}

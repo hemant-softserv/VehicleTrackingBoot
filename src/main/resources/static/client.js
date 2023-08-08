@@ -8,10 +8,8 @@ $(document)
 					let idd = "Id-" + Math.random();
 					if (stompClient != null)
 						stompClient.disconnect();
-					var socket = new SockJS(
-							'http://13.75.220.119/VehicleTrackingBoot/updateMapLocation');
-					//var socket = new
-					//SockJS('http://localhost:8080/updateMapLocation');
+					var socket = new SockJS('https://247rsa.softservtest.com/VehicleTrackingBoot/updateMapLocation');
+					//var socket = new SockJS('http://localhost:8080/updateMapLocation');
 					//var socket = new SockJS(
 						//		'http://localhost/VehicleTrackingBoot/updateMapLocation');
 					stompClient = Stomp.over(socket);

@@ -10,15 +10,17 @@ $(document).ready(function(){
 	
 	var map;
 	var markers= [];
+	var shapeCordinates={"polygon":[],"circle":{"radius":'',"center":null}};
+
 	 async function initMap() {
-		 
-		 var center = new google.maps.LatLng(23.76250228864416, 90.37851862204738);
+		
+		 var center = new google.maps.LatLng(26.7782, 75.8625); //26.996471,75.876472
 		 
 		   // Request needed libraries.
 		  
 		   const { Map } = await google.maps.importLibrary("maps");
 		   var opts = {
-		            zoom: 10,
+		            zoom: 18,
 		            center: center,
 		            mapTypeId: google.maps.MapTypeId.ROADMAP
 		        };
@@ -26,14 +28,87 @@ $(document).ready(function(){
 		   // The map, centered at
 		 // map = new Map(document.getElementById("map"),opts);
 		   map = new Map(document.getElementById('map'), opts);
+		   
+		   const {DrawingManager} = await google.maps.importLibrary("drawing");
+		  
+		   
+		   var drawingManager=new DrawingManager({
+			   drawingControlOptions:{
+				   position: google.maps.ControlPosition.TOP_CENTER,
+				   drawingModes:[
+					   google.maps.drawing.OverlayType.CIRCLE,
+		               google.maps.drawing.OverlayType.POLYGON
+					   ]
+			   },
+			   polygonOptions:{
+				   fillcolor:'#ADFF2F',
+				   fillopacity:0.5,
+				   clickable:true,
+				   draggable:false,
+				   editable:false
+			   },
+			   cicleOptions:{
+				   fillcolor:'#ffff00',
+				   fillopacity:0.2,
+				   strokeweight:3,
+				   clickable:true,
+				   editable:false
+			   }
+		   });
+		   drawingManager.setMap(map);
+		   
+		   google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+			   if(event.type=='polygon'){
+				   shapeCordinates['polygon'] = event.overlay.getPath().getArray();
+				   shapeCordinates['circle']['radius']='';
+				   shapeCordinates['circle']['center']=null;
+			   }else if(event.type=='circle'){
+				   shapeCordinates['polygon']=[];
+				   shapeCordinates['circle']['radius'] = event.overlay.radius;
+				   shapeCordinates['circle']['center'] = event.overlay.center;
+			   }
+
+			});
+		
+		 
 		 }
-	 initMap();
+	
 	 
 	// Add marker
 	    function addMarker(lat, lon, idd) {
-	    	
+	    
+	    	// polygon 
+	    	if(shapeCordinates['polygon'].length>0){
+	    		 var p= new google.maps.Polygon( { paths: shapeCordinates['polygon'] } );
+	    		 console.log(p);
+	    		 var pp=google.maps.geometry.poly.containsLocation(new google.maps.LatLng( lat,lon ),p);
+			     if(pp){
+			    	 alert("in polygon");
+			     }else{
+			    	 alert("out polygon");
+			     }
+	    		
+	    	}else {//circle
+	    		
+	    		var c=new google.maps.Circle({
+				      strokeColor: "#FF0000",
+				      strokeOpacity: 0.8,
+				      strokeWeight: 2,
+				      fillColor: "#FF0000",
+				      fillOpacity: 0.35,
+				      center: shapeCordinates['circle']['center'],
+				      radius: shapeCordinates['circle']['radius']
+				    });
+	    		var cc=c.getBounds().contains(new google.maps.LatLng( lat,lon ))
+	    		if(cc){
+	    			alert("in circle");
+	    		}else{
+	    			alert("out circle");
+	    		}
+	    	}
 	    	
 	        deleteMarkers(idd);
+	        
 	        var marker = new google.maps.Marker({
 	            position: new google.maps.LatLng(lat, lon),
 	            map: map,
@@ -41,6 +116,8 @@ $(document).ready(function(){
 	        });
 	        markers.push(marker);
 	        map.setCenter(new google.maps.LatLng(lat, lon));
+	       
+	        
 	    }
 	    // Removes the markers from the map, but keeps them in the array.
 	    function clearMarkers(idd) {
@@ -57,11 +134,10 @@ $(document).ready(function(){
 	        clearMarkers(idd);
 	        // markers = [];
 	    }
-	
+	    initMap();
 
-	
-		var socket = new SockJS('http://13.75.220.119/VehicleTrackingBoot/updateMapLocation');
-	     //var socket = new SockJS('http://localhost:8080/updateMapLocation');
+		var socket = new SockJS('https://247rsa.softservtest.com/VehicleTrackingBoot/updateMapLocation');
+	    // var socket = new SockJS('http://localhost:8080/updateMapLocation');
 	    
 	    stompClient = Stomp.over(socket);
 	 console.log("I am out frame");
@@ -75,7 +151,9 @@ $(document).ready(function(){
 	        	var latt=parseFloat(mapJson.latitude);
 	        	var lngg=parseFloat(mapJson.longitude);
 	        	var idd=mapJson.id;
+	        	
 	        	console.log(mapJson.id);
+	        	
 	        	
 	        		 if(Number.isNaN(latt) || Number.isNaN(lngg) ){
 	        			 navigator.geolocation.getCurrentPosition(
@@ -102,20 +180,11 @@ $(document).ready(function(){
 		        		 }
 	        			 
 	        		 }
-	        		
-	        		
-	        	
-	        	$("#lang_td").html("LLatitude: "+mapJson.latitude);
-	        	$("#lat_td").html("LLongitude: "+mapJson.longitude);
+	        			        	
+	        	//$("#lang_td").html("LLatitude: "+mapJson.latitude);
+	        	//$("#lat_td").html("LLongitude: "+mapJson.longitude);
 	            
 	        });
 	    });
-	
-
-
-
-
-	
-	 
-	 
+		 
 });
