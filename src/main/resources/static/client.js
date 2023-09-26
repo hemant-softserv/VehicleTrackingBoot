@@ -9,7 +9,7 @@ $(document)
 					if (stompClient != null)
 						stompClient.disconnect();
 					var socket = new SockJS('https://247rsa.softservtest.com/VehicleTrackingBoot/updateMapLocation');
-					//var socket = new SockJS('http://localhost:8080/updateMapLocation');
+					//var socket = new SockJS('http://localhost/VehicleTrackingBoot/updateMapLocation');
 					//var socket = new SockJS(
 						//		'http://localhost/VehicleTrackingBoot/updateMapLocation');
 					stompClient = Stomp.over(socket);

@@ -24,7 +24,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		registry.addEndpoint("/updateMapLocation");
 		registry.addEndpoint("/updateMapLocation").withSockJS();
 		
-		//registry.addEndpoint("/updateMapLocation").setHandshakeHandler(new UserHandshakeHandler()).withSockJS();
 		
 	}
 

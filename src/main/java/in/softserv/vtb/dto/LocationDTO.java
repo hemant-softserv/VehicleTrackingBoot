@@ -8,5 +8,5 @@ public class LocationDTO {
 	private String latitude;
 	private String longitude;
 	private String id;
-	
+	private String status;
 }
